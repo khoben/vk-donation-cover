@@ -21,5 +21,5 @@
 2. В папке с проектом открыть консоль и выполняем действия, описанные в разделе Deploy using heroku git (открывается после п.1) до команды git push heroku master.
 3. heroku config:set DISABLE_COLLECTSTATIC=1
 4. выполняем git push heroku master
-5. После запускаем heroku ps:scale web=1
+5. После запускаем heroku ps:scale clock=1
 6. Success
