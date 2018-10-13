@@ -141,7 +141,7 @@ def draw_basic(text, width=1, height=1, font_size=FONT_SIZE, align="center"):
     return img
 
 #delta between now and last donation time
-def get_delta_time(time):
+def getDeltaTime(time):
     dateTimeformat = '%Y-%m-%d %H:%M:%S.%f'
     convertedTime = datetime.strptime(time, dateTimeformat)
     timezone = pytz.timezone('Europe/Moscow')
@@ -152,35 +152,40 @@ def get_delta_time(time):
     return delta
 
 
-def main():
+def checkDonations(lastDonation):
+    needUpdate = False
     r = requests.get(BASE_URL.format(token=TOKEN_DONATIONPAY,
                                      limit=LIMIT_DONATIONS_TO_SHOW, status=DONATION_STATUS))
     try:
-        lastDonations = r.json()['data']
+        donations = r.json()['data']
     except Exception as e:
         print(e)
     else:
-        time = lastDonations[0]['created_at']['date']
-        deltaTime = get_delta_time(time)
+        # if last is none then set it
+        if not lastDonation:
+            lastDonation.update(donations[0])
+            needUpdate = True
+        else:
+            # comparing last getted and new getted donation 
+            if lastDonation != donations[0]:
+                needUpdate = True
+                lastDonation.clear()
+                lastDonation = dict(donations[0])
 
-        if deltaTime < MAX_DELTATIME_FROM_LAST_DONATE:
-            print(lastDonations)
+        if needUpdate:
+            print('UPDATE!')
+            print(donations)
             outForImage = []
 
-            for i in lastDonations:
+            for i in donations:
                 outForImage.append(['{name}'.format(name=i['what'][:MAX_LEN_STRING_NAME]),
                                     '{sum}'.format(sum=i['sum']),
                                     '{comment}'.format(comment=i['comment'].replace('Комментарий: ', '')[:MAX_LEN_STRING_COMMENT])])
             try:
                 upload_cover(draw_basic(outForImage),
-                             access_token=TOKEN_VK, group_id=GROUP_ID)
+                            access_token=TOKEN_VK, group_id=GROUP_ID)
             except Exception as e:
                 print('cant upload cover coz {}'.format(e))
         else:
             print('wont change cover')
-            print(lastDonations)
-            print('delta = {}'.format(deltaTime))
-
-
-if __name__ == '__main__':
-    main()
+            print(donations)

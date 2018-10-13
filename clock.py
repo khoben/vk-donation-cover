@@ -1,11 +1,14 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
-from main import main
+from donations import checkDonations
 from config import INTERVAL
 sched = BlockingScheduler()
 
+# store last donation
+lastDonation = {}
+
 @sched.scheduled_job('interval', seconds=INTERVAL)
 def timed_job():
-    main()
-
+    global lastDonation
+    checkDonations(lastDonation)
 
 sched.start()
