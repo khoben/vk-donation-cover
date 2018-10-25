@@ -271,7 +271,7 @@ def render_donation(
         (
             MARGIN_LEFT_COVER +
             max(int((MARGIN_RIGHT_COVER - MARGIN_LEFT_COVER - w) / 2), 0),
-            MARGIN_BOTTOM_COVER - (h + spacing * linesInFinalText),
+            MARGIN_BOTTOM_COVER - (h + spacing * (linesInFinalText + 1)),
         ),
         im,
     )
