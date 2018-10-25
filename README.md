@@ -37,7 +37,7 @@
 ```
     git push heroku master
 ```
-6. Запустим наше приложение и отключим веб интерфейс
+6. Запустить приложение и отключить веб интерфейс
 ```
     heroku ps:scale clock=1
     heroku ps:scale web=0

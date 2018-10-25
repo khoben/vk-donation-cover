@@ -26,8 +26,8 @@ def upload_cover(
     image,
     access_token,
     group_id,
-    width=ORIGINAL_COVER_WIDTH,
-    height=ORIGINAL_COVER_HEIGHT,
+    width,
+    height,
 ):
     """
     Upload cover and set it
@@ -192,7 +192,7 @@ def draw_outline(draw, x, y, finalText, shadow_color, fnt, align, spacing):
     )
 
 
-def draw_basic(
+def render_donation(
     text,
     obscene_filter=True,
     path_to_cover=ORIGINAL_COVER_PATH,
@@ -280,7 +280,7 @@ def draw_basic(
     original.save(stream, format="png")
     stream.seek(0)
     img = stream.read()
-    return img
+    return img, original.width, original.height
 
 
 def getDeltaTime(time):
@@ -371,8 +371,11 @@ def checkDonations():
                     "comment": message,
                 }
             try:
+                donation_image, width, height = render_donation(
+                    text=outForImage
+                )
                 upload_cover(
-                    draw_basic(outForImage), access_token=TOKEN_VK, group_id=GROUP_ID
+                    image=donation_image, access_token=TOKEN_VK, group_id=GROUP_ID, width=width, height=height
                 )
             except Exception as e:
                 print("Error: Cant upload cover: {}".format(str(e)))
