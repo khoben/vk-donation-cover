@@ -1,0 +1,7 @@
+{
+    "name": "vk-donation-cover",
+    "description": "Render and upload vk cover",
+    "version": "1.0.0",
+    "devDependencies": {
+    }
+  }

@@ -8,18 +8,34 @@
 3. ID группы ВКонтакте.
 5. Подготовленная обложка, на которую будет выводится сообщение о донате.
 
-Настройка:
+Настройка ([config.py](./config.py)):
 
-Изменить токены ВК и donatepay
+1. Изменить токены ВК и donatepay
 
-Все переменные доступны в файле config.py
+2. Все переменные доступны в файле config.py
 
 Обложка хранится в images/original.png (можно изменить все в том же config.py)
 
 Установка:
-1. Создать в Heroku новое python приложение
-2. В папке с проектом открыть консоль и выполняем действия, описанные в разделе Deploy using heroku git (открывается после п.1) до команды git push heroku master.
-3. heroku config:set DISABLE_COLLECTSTATIC=1
-4. выполняем git push heroku master
-5. После запускаем heroku ps:scale clock=1
-6. Success
+1. Склонировать проект
+```
+    git clone git://github.com/khoben/vk-donation-cover.git
+```
+2. Создать в Heroku CLI новое приложение
+```
+    heroku create {ваше название}
+```
+3. Добавить репозиторий Heroku
+```
+    heroku git:remote -a {ваше название}
+```
+4. Загрузить проект на heroku.com
+```
+    git push heroku master
+```
+6. Отключим веб интерфейс
+```
+    heroku ps:scale clock=1
+    heroku ps:scale web=0
+```
+
