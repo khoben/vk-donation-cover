@@ -6,13 +6,11 @@
 2. Аккаунт и [API ключ donatepay](http://donatepay.ru/page/api).
 3. Платформа [Heroku](https://devcenter.heroku.com/articles/getting-started-with-python#introduction).
 3. ID группы ВКонтакте.
-5. Подготовленная обложка, на которую будет выводится сообщение о донате.
+5. Подготовленная обложка, куда будет выводится сообщение о донате.
 
 Настройка ([config.py](./config.py)):
 
-1. Изменить токены ВК и donatepay
-
-2. Все переменные доступны в файле config.py
+Все переменные доступны в файле config.py
 
 Обложка хранится в images/original.png (можно изменить все в том же config.py)
 
@@ -29,11 +27,17 @@
 ```
     heroku git:remote -a {ваше название}
 ```
+4. Изменить токены и ид группы
+```
+    heroku config:set TOKEN_DONATIONPAY={XXX} TOKEN_VK={XXX} GROUP_ID={XXX}
+```
+{XXX} - соответсвующее значения
+
 4. Загрузить проект на heroku.com
 ```
     git push heroku master
 ```
-6. Отключим веб интерфейс
+6. Запустим наше приложение и отключим веб интерфейс
 ```
     heroku ps:scale clock=1
     heroku ps:scale web=0
