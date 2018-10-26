@@ -17,7 +17,7 @@
 Установка:
 1. Склонировать проект
 ```
-    git remote add origin git@github.com:khoben/vk-donation-cover.git
+    git clone git@github.com:khoben/vk-donation-cover.git
 ```
 2. Создать в Heroku CLI новое приложение
 ```
