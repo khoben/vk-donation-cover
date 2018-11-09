@@ -29,8 +29,10 @@ Donation comment formatting
 """
 # max length for whole comment
 COMMENT_MAX_LEN = 300
-# max length for single line of comment
-COMMENT_LINE_MAX_LEN = 40
+
+# max length for single line of comment (unused)
+# COMMENT_LINE_MAX_LEN = 40
+
 # max length for donator`s name
 COMMENT_DONATOR_NAME_MAX_LEN = 20
 # max count of comment lines
@@ -58,6 +60,6 @@ OFFSET_XY = 5
 Set the area for donation on cover image
 """
 MARGIN_LEFT_COVER = 1760
-MARGIN_RIGHT_COVER = 2724
+MARGIN_RIGHT_COVER = 2750
 MARGIN_TOP_COVER = 45
 MARGIN_BOTTOM_COVER = 770

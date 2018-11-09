@@ -217,9 +217,15 @@ def render_donation(
     fnt = ImageFont.truetype(FONT_PATH, font_size)
     finalText = ""
 
+    # calc max amount symbol per line
+    availableWidthPx = (MARGIN_RIGHT_COVER - MARGIN_LEFT_COVER)
+    widthFontLetterPx = fnt.getsize('a')[0]
+
+    maxSymbolPerLine = int(availableWidthPx/widthFontLetterPx)
+
     # build output string
     for i in text.values():
-        comment = wrap_string(i["comment"], COMMENT_LINE_MAX_LEN)
+        comment = wrap_string(i["comment"], maxSymbolPerLine)
         finalText += "{name} — {sum}RUB\n{comment}\n\n".format(
             name=i["name"], sum=i["sum"], comment=comment
         )
