@@ -82,7 +82,22 @@ def reduce_opacity(im, opacity):
     return im
 
 
-def wrap_string(text, width):
+def wrap_header(name, sum_, maxWidth):
+    """
+    Wrap header string
+    """
+
+    header = "{name} — {sum}RUB".format(
+        name=name,
+        sum=sum_
+    )
+    if len(header) > maxWidth:
+        header = name + "\n" + sum_ + "RUB"
+
+    return header
+
+
+def wrap_comment(text, width):
     """
     Wrap one-line string
     """
@@ -225,10 +240,15 @@ def render_donation(
 
     # build output string
     for i in text.values():
-        comment = wrap_string(i["comment"], maxSymbolPerLine)
-        finalText += "{name} — {sum}RUB\n{comment}\n\n".format(
-            name=i["name"], sum=i["sum"], comment=comment
-        )
+        header = wrap_header(
+            name=i["name"][:COMMENT_DONATOR_NAME_MAX_LEN],
+            sum_=i["sum"],
+            maxWidth=maxSymbolPerLine)
+        body = wrap_comment(
+            text=i["comment"][:COMMENT_MAX_LEN],
+            width=maxSymbolPerLine)
+        if body:
+            finalText += header+"\n"+body+"\n\n"
 
     # cut last new lines
     finalText = finalText[:-2]
@@ -368,11 +388,10 @@ def checkDonations():
             outForImage = {}
 
             for i in donations:
-                message = i["comment"].replace("Комментарий: ", "")[
-                    :COMMENT_MAX_LEN]
+                message = i["comment"].replace("Комментарий: ", "")
 
                 outForImage[i["id"]] = {
-                    "name": i["what"][:COMMENT_DONATOR_NAME_MAX_LEN],
+                    "name": i["what"],
                     "sum": i["sum"],
                     "comment": message,
                 }
