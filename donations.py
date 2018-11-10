@@ -92,7 +92,7 @@ def wrap_header(name, sum_, maxWidth):
         sum=sum_
     )
     if len(header) > maxWidth:
-        header = name + "\n" + sum_ + "RUB"
+        header = name[:maxWidth] + "\n" + sum_ + "RUB"
 
     return header
 
