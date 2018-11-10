@@ -82,7 +82,22 @@ def reduce_opacity(im, opacity):
     return im
 
 
-def wrap_string(text, width):
+def wrap_header(name, sum_, maxWidth):
+    """
+    Wrap header string
+    """
+
+    header = "{name} — {sum}RUB".format(
+        name=name,
+        sum=sum_
+    )
+    if len(header) > maxWidth:
+        header = name[:maxWidth] + "\n" + sum_ + "RUB"
+
+    return header
+
+
+def wrap_comment(text, width):
     """
     Wrap one-line string
     """
@@ -217,12 +232,23 @@ def render_donation(
     fnt = ImageFont.truetype(FONT_PATH, font_size)
     finalText = ""
 
+    # calc max amount symbol per line
+    availableWidthPx = (MARGIN_RIGHT_COVER - MARGIN_LEFT_COVER)
+    widthFontLetterPx = fnt.getsize('a')[0]
+
+    maxSymbolPerLine = int(availableWidthPx/widthFontLetterPx)
+
     # build output string
     for i in text.values():
-        comment = wrap_string(i["comment"], COMMENT_LINE_MAX_LEN)
-        finalText += "{name} — {sum}RUB\n{comment}\n\n".format(
-            name=i["name"], sum=i["sum"], comment=comment
-        )
+        header = wrap_header(
+            name=i["name"][:COMMENT_DONATOR_NAME_MAX_LEN],
+            sum_=i["sum"],
+            maxWidth=maxSymbolPerLine)
+        body = wrap_comment(
+            text=i["comment"][:COMMENT_MAX_LEN],
+            width=maxSymbolPerLine)
+        if body:
+            finalText += header+"\n"+body+"\n\n"
 
     # cut last new lines
     finalText = finalText[:-2]
@@ -271,7 +297,7 @@ def render_donation(
         (
             MARGIN_LEFT_COVER +
             max(int((MARGIN_RIGHT_COVER - MARGIN_LEFT_COVER - w) / 2), 0),
-            MARGIN_BOTTOM_COVER - (h + spacing * (linesInFinalText + 1)),
+            MARGIN_BOTTOM_COVER - (h + spacing * (linesInFinalText + 2)),
         ),
         im,
     )
@@ -362,11 +388,10 @@ def checkDonations():
             outForImage = {}
 
             for i in donations:
-                message = i["comment"].replace("Комментарий: ", "")[
-                    :COMMENT_MAX_LEN]
+                message = i["comment"].replace("Комментарий: ", "")
 
                 outForImage[i["id"]] = {
-                    "name": i["what"][:COMMENT_DONATOR_NAME_MAX_LEN],
+                    "name": i["what"],
                     "sum": i["sum"],
                     "comment": message,
                 }
