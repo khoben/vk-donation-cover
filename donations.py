@@ -14,13 +14,16 @@ import cfscrape
 from config import *
 from obscene_words_filter.default import get_default_filter
 
+import html.parser as htmlparser
+
 # id last donation
 idLastDonation = -1
 # swear word filter
 wordFilter = get_default_filter()
 # clouflare bypass
 cloudFlareBypass = cfscrape.create_scraper(delay=10)
-
+# parse html codes to normal characters
+parser = htmlparser.HTMLParser()
 
 def upload_cover(
     image,
@@ -370,6 +373,8 @@ def checkDonations():
             for i in donations:
                 message = i["comment"].replace("Комментарий: ", "")[
                     :COMMENT_MAX_LEN]
+
+                message = parser.unescape(message)
 
                 outForImage[i["id"]] = {
                     "name": i["what"][:COMMENT_DONATOR_NAME_MAX_LEN],
