@@ -352,7 +352,9 @@ def checkDonations():
             token=TOKEN_DONATIONPAY,
             limit=LIMIT_DONATIONS_TO_SHOW,
             status=DONATION_STATUS,
-        )
+        ), headers={
+            'User-Agent': 'My User Agent 1.0'
+        }
     )
     try:
         donations = r.json()["data"]
@@ -367,7 +369,10 @@ def checkDonations():
                     token=TOKEN_DONATIONPAY,
                     limit=LIMIT_DONATIONS_TO_SHOW,
                     status=DONATION_STATUS,
-                )
+                ),
+                headers={
+                    'User-Agent': 'My User Agent 1.0'
+                }
             )
             donations = r.json()["data"]
         except Exception as e:
