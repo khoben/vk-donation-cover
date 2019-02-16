@@ -353,7 +353,7 @@ def checkDonations():
             limit=LIMIT_DONATIONS_TO_SHOW,
             status=DONATION_STATUS,
         ), headers={
-            'User-Agent': 'My User Agent 1.0'
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
         }
     )
     try:
@@ -371,7 +371,7 @@ def checkDonations():
                     status=DONATION_STATUS,
                 ),
                 headers={
-                    'User-Agent': 'My User Agent 1.0'
+                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
                 }
             )
             donations = r.json()["data"]
