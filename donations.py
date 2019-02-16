@@ -367,6 +367,7 @@ def checkDonations():
                     status=DONATION_STATUS,
                 )
             )
+            print(r.content)
             donations = r.json()["data"]
         except Exception as e:
             print("Bad answer from server: {}".format(str(e)))
