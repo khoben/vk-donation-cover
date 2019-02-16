@@ -20,10 +20,9 @@ import html.parser as htmlparser
 idLastDonation = -1
 # swear word filter
 wordFilter = get_default_filter()
-# clouflare bypass
-cloudFlareBypass = cfscrape.create_scraper(delay=10)
 # parse html codes to normal characters
 parser = htmlparser.HTMLParser()
+
 
 
 def upload_cover(
@@ -347,7 +346,8 @@ def checkDonations():
 
     # True : if all right
     dataStatus = False
-    r = requests.get(
+    sess = requests.session()
+    r = sess.get(
         BASE_URL.format(
             token=TOKEN_DONATIONPAY,
             limit=LIMIT_DONATIONS_TO_SHOW,
@@ -360,6 +360,8 @@ def checkDonations():
         print("Bad answer from server: {}".format(str(e)))
         print("Trying use cloudflare bypass...")
         try:
+            # clouflare bypass
+            cloudFlareBypass = cfscrape.create_scraper(sess=sess, delay=10)
             r = cloudFlareBypass.get(
                 BASE_URL.format(
                     token=TOKEN_DONATIONPAY,
