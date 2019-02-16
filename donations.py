@@ -21,7 +21,7 @@ idLastDonation = -1
 # swear word filter
 wordFilter = get_default_filter()
 # clouflare bypass
-cloudFlareBypass = cfscrape.create_scraper(delay=20)
+cloudFlareBypass = cfscrape.create_scraper(delay=40)
 # parse html codes to normal characters
 parser = htmlparser.HTMLParser()
 
@@ -367,7 +367,6 @@ def checkDonations():
                     status=DONATION_STATUS,
                 )
             )
-            time.sleep(5)
             donations = r.json()["data"]
         except Exception as e:
             print("Bad answer from server: {}".format(str(e)))
