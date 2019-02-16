@@ -21,7 +21,7 @@ idLastDonation = -1
 # swear word filter
 wordFilter = get_default_filter()
 # clouflare bypass
-cloudFlareBypass = cfscrape.create_scraper(delay=10)
+cloudFlareBypass = cfscrape.create_scraper(delay=15)
 # parse html codes to normal characters
 parser = htmlparser.HTMLParser()
 
