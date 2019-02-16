@@ -347,13 +347,13 @@ def checkDonations():
 
     # True : if all right
     dataStatus = False
-    r = requests.get(
-        BASE_URL.format(
-            token=TOKEN_DONATIONPAY,
-            limit=LIMIT_DONATIONS_TO_SHOW,
-            status=DONATION_STATUS,
-        )
-    )
+    r = cloudFlareBypass.get(
+                BASE_URL.format(
+                    token=TOKEN_DONATIONPAY,
+                    limit=LIMIT_DONATIONS_TO_SHOW,
+                    status=DONATION_STATUS,
+                )
+            )
     try:
         donations = r.json()["data"]
     except Exception as e:
@@ -413,3 +413,4 @@ def checkDonations():
         else:
             print("Won`t change cover")
             print(donations)
+            
