@@ -4,7 +4,7 @@ TOKEN_DONATIONPAY = environ.get("TOKEN_DONATIONPAY")
 TOKEN_VK = environ.get("TOKEN_VK")
 GROUP_ID = environ.get("GROUP_ID")
 
-BASE_URL = "http://donatepay.ru/api/v1/transactions?access_token={token}&limit={limit}\
+BASE_URL = "http://mail.donatepay.ru/api/v1/transactions?access_token={token}&limit={limit}\
                                                                         &status={status}&type=donation"
 
 # path to cover image
