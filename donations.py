@@ -335,7 +335,7 @@ def filterBadWords(message):
     return wordFilter.mask_bad_words(message)
 
 
-def checkDonations():
+def checkDonations(proxies):
     """
     Check new donation and render it
     """
@@ -347,6 +347,7 @@ def checkDonations():
     # True : if all right
     dataStatus = False
     sess = requests.session()
+    sess.proxies.update(proxies)
     r = sess.get(
         BASE_URL.format(
             token=TOKEN_DONATIONPAY,
