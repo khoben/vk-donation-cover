@@ -1,20 +1,19 @@
 # coding: utf-8
 
+import html.parser as htmlparser
 import re
 import time
 from datetime import datetime
 from io import BytesIO
+from itertools import cycle
 from urllib import parse
 
 import pytz
 import requests
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont
 
-import cfscrape
 from config import *
 from obscene_words_filter.default import get_default_filter
-
-import html.parser as htmlparser
 
 # id last donation
 idLastDonation = -1
@@ -24,14 +23,7 @@ wordFilter = get_default_filter()
 parser = htmlparser.HTMLParser()
 
 
-
-def upload_cover(
-    image,
-    access_token,
-    group_id,
-    width,
-    height,
-):
+def upload_cover(image, access_token, group_id, width, height):
     """
     Upload cover and set it
     """
@@ -90,10 +82,7 @@ def wrap_header(name, sum_, maxWidth):
     Wrap header string
     """
 
-    header = "{name} — {sum}RUB".format(
-        name=name,
-        sum=sum_
-    )
+    header = "{name} — {sum}RUB".format(name=name, sum=sum_)
     if len(header) > maxWidth:
         header = name[:maxWidth] + "\n" + sum_ + "RUB"
 
@@ -236,22 +225,21 @@ def render_donation(
     finalText = ""
 
     # calc max amount symbol per line
-    availableWidthPx = (MARGIN_RIGHT_COVER - MARGIN_LEFT_COVER)
-    widthFontLetterPx = fnt.getsize('a')[0]
+    availableWidthPx = MARGIN_RIGHT_COVER - MARGIN_LEFT_COVER
+    widthFontLetterPx = fnt.getsize("a")[0]
 
-    maxSymbolPerLine = int(availableWidthPx/widthFontLetterPx)
+    maxSymbolPerLine = int(availableWidthPx / widthFontLetterPx)
 
     # build output string
     for i in text.values():
         header = wrap_header(
             name=i["name"][:COMMENT_DONATOR_NAME_MAX_LEN],
             sum_=i["sum"],
-            maxWidth=maxSymbolPerLine)
-        body = wrap_comment(
-            text=i["comment"][:COMMENT_MAX_LEN],
-            width=maxSymbolPerLine)
+            maxWidth=maxSymbolPerLine,
+        )
+        body = wrap_comment(text=i["comment"][:COMMENT_MAX_LEN], width=maxSymbolPerLine)
         if body:
-            finalText += header+"\n"+body+"\n\n"
+            finalText += header + "\n" + body + "\n\n"
 
     # cut last new lines
     finalText = finalText[:-2]
@@ -298,8 +286,8 @@ def render_donation(
     original.paste(
         im,
         (
-            MARGIN_LEFT_COVER +
-            max(int((MARGIN_RIGHT_COVER - MARGIN_LEFT_COVER - w) / 2), 0),
+            MARGIN_LEFT_COVER
+            + max(int((MARGIN_RIGHT_COVER - MARGIN_LEFT_COVER - w) / 2), 0),
             MARGIN_BOTTOM_COVER - (h + spacing * (linesInFinalText + 2)),
         ),
         im,
@@ -347,39 +335,40 @@ def checkDonations(proxies):
     # True : if all right
     dataStatus = False
     sess = requests.session()
-    sess.proxies.update(proxies)
     r = sess.get(
         BASE_URL.format(
             token=TOKEN_DONATIONPAY,
             limit=LIMIT_DONATIONS_TO_SHOW,
             status=DONATION_STATUS,
-        ), headers={
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
-        }
+        ),
+        headers={
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36"
+        },
     )
     try:
         donations = r.json()["data"]
     except Exception as e:
         print("Bad answer from server: {}".format(str(e)))
-        print("Trying use cloudflare bypass...")
-        try:
-            # clouflare bypass
-            cloudFlareBypass = cfscrape.create_scraper(sess=sess, delay=10)
-            r = cloudFlareBypass.get(
-                BASE_URL.format(
-                    token=TOKEN_DONATIONPAY,
-                    limit=LIMIT_DONATIONS_TO_SHOW,
-                    status=DONATION_STATUS,
-                ),
-                headers={
-                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
-                }
-            )
-            donations = r.json()["data"]
-        except Exception as e:
-            print("Bad answer from server: {}".format(str(e)))
-        else:
-            dataStatus = True
+        print("Trying use proxy...")
+
+        proxy_pool = cycle(proxies)
+
+        for i in range(len(proxies)):
+            proxy = next(proxy_pool)
+            try:
+                r = sess.get(
+                    BASE_URL.format(
+                        token=TOKEN_DONATIONPAY,
+                        limit=LIMIT_DONATIONS_TO_SHOW,
+                        status=DONATION_STATUS,
+                    ),
+                    proxies={"http": proxy, "https": proxy},
+                )
+                donations = r.json()["data"]
+            except Exception as e:
+                print("Bad answer from server: {}".format(str(e)))
+            else:
+                dataStatus = True
     else:
         dataStatus = True
 
@@ -410,15 +399,16 @@ def checkDonations(proxies):
                     "comment": message,
                 }
             try:
-                donation_image, width, height = render_donation(
-                    text=outForImage
-                )
+                donation_image, width, height = render_donation(text=outForImage)
                 upload_cover(
-                    image=donation_image, access_token=TOKEN_VK, group_id=GROUP_ID, width=width, height=height
+                    image=donation_image,
+                    access_token=TOKEN_VK,
+                    group_id=GROUP_ID,
+                    width=width,
+                    height=height,
                 )
             except Exception as e:
                 print("Error: Cant upload cover: {}".format(str(e)))
         else:
             print("Won`t change cover")
             print(donations)
-            
