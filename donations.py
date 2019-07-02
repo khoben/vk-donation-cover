@@ -369,6 +369,7 @@ def checkDonations(proxies):
                 print("Bad answer from server: {}".format(str(e)))
             else:
                 dataStatus = True
+                break
     else:
         dataStatus = True
 
