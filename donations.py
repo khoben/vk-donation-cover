@@ -23,7 +23,13 @@ wordFilter = get_default_filter()
 parser = htmlparser.HTMLParser()
 
 
-def upload_cover(image, access_token, group_id, width, height):
+def upload_cover(
+    image,
+    access_token,
+    group_id,
+    width,
+    height,
+):
     """
     Upload cover and set it
     """
@@ -82,7 +88,10 @@ def wrap_header(name, sum_, maxWidth):
     Wrap header string
     """
 
-    header = "{name} — {sum}RUB".format(name=name, sum=sum_)
+    header = "{name} — {sum}RUB".format(
+        name=name,
+        sum=sum_
+    )
     if len(header) > maxWidth:
         header = name[:maxWidth] + "\n" + sum_ + "RUB"
 
