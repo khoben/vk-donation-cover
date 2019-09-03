@@ -344,6 +344,11 @@ def checkDonations(proxies):
     # True : if all right
     dataStatus = False
     sess = requests.session()
+    print(BASE_URL.format(
+            token=TOKEN_DONATIONPAY,
+            limit=LIMIT_DONATIONS_TO_SHOW,
+            status=DONATION_STATUS,
+        ))
     r = sess.get(
         BASE_URL.format(
             token=TOKEN_DONATIONPAY,
@@ -422,3 +427,6 @@ def checkDonations(proxies):
         else:
             print("Won`t change cover")
             print(donations)
+
+if __name__ == "__main__":
+    checkDonations([])

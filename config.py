@@ -1,5 +1,8 @@
 from os import environ
 
+from dotenv import load_dotenv
+load_dotenv()
+
 TOKEN_DONATIONPAY = environ.get("TOKEN_DONATIONPAY")
 TOKEN_VK = environ.get("TOKEN_VK")
 GROUP_ID = environ.get("GROUP_ID")
