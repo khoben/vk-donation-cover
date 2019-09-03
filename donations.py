@@ -331,8 +331,21 @@ def filterBadWords(message):
 
     return wordFilter.mask_bad_words(message)
 
+def get_proxies():
+    url = "https://free-proxy-list.net/"
+    response = requests.get(url)
+    parser = fromstring(response.text)
+    proxies = set()
+    for i in parser.xpath("//tbody/tr")[:10]:
+        if i.xpath('.//td[7][contains(text(),"yes")]'):
+            # Grabbing IP and corresponding PORT
+            proxy = ":".join(
+                [i.xpath(".//td[1]/text()")[0], i.xpath(".//td[2]/text()")[0]]
+            )
+            proxies.add(proxy)
+    return proxies
 
-def checkDonations(proxies):
+def checkDonations(with_proxy=False):
     """
     Check new donation and render it
     """
@@ -344,11 +357,6 @@ def checkDonations(proxies):
     # True : if all right
     dataStatus = False
     sess = requests.session()
-    print(BASE_URL.format(
-            token=TOKEN_DONATIONPAY,
-            limit=LIMIT_DONATIONS_TO_SHOW,
-            status=DONATION_STATUS,
-        ))
     r = sess.get(
         BASE_URL.format(
             token=TOKEN_DONATIONPAY,
@@ -363,27 +371,31 @@ def checkDonations(proxies):
         donations = r.json()["data"]
     except Exception as e:
         print("Bad answer from server: {}".format(str(e)))
-        print("Trying use proxy...")
 
-        proxy_pool = cycle(proxies)
+        if with_proxy:
 
-        for i in range(len(proxies)):
-            proxy = next(proxy_pool)
-            try:
-                r = sess.get(
-                    BASE_URL.format(
-                        token=TOKEN_DONATIONPAY,
-                        limit=LIMIT_DONATIONS_TO_SHOW,
-                        status=DONATION_STATUS,
-                    ),
-                    proxies={"http": proxy, "https": proxy},
-                )
-                donations = r.json()["data"]
-            except Exception as e:
-                print("Bad answer from server: {}".format(str(e)))
-            else:
-                dataStatus = True
-                break
+            print("Trying use proxy...")
+
+            proxies = get_proxies()
+            proxy_pool = cycle(proxies)
+
+            for i in range(len(proxies)):
+                proxy = next(proxy_pool)
+                try:
+                    r = sess.get(
+                        BASE_URL.format(
+                            token=TOKEN_DONATIONPAY,
+                            limit=LIMIT_DONATIONS_TO_SHOW,
+                            status=DONATION_STATUS,
+                        ),
+                        proxies={"http": proxy, "https": proxy},
+                    )
+                    donations = r.json()["data"]
+                except Exception as e:
+                    print("Bad answer from server: {}".format(str(e)))
+                else:
+                    dataStatus = True
+                    break
     else:
         dataStatus = True
 
