@@ -1,5 +1,5 @@
 ﻿APScheduler==3.0.0
-Pillow==8.1.1
+Pillow==9.0.1
 requests==2.22.0
 lxml
 python-dotenv
